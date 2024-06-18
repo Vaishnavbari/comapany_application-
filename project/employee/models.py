@@ -4,13 +4,13 @@ from company.models import document_type, company, department
 # Create your models here.
 
 class position(models.Model):
-    id = models.IntegerField(primary_key=True, unique=True, default=1) 
+    # id = models.IntegerField(primary_key=True, unique=True, default=1) 
     code =models.CharField(max_length=5000)
     description = models.TextField(max_length=5000)
 
 
 class person(models.Model):
-    id = models.IntegerField(primary_key=True, unique=True, default=1) 
+    # id = models.IntegerField(primary_key=True, unique=True, default=1) 
     document_type_id = models.ForeignKey(document_type, on_delete=models.CASCADE, related_name="document_type_id")
     first_name = models.CharField(max_length=5000)
     last_name = models.CharField(max_length=5000)
@@ -20,7 +20,7 @@ class person(models.Model):
 
 
 class employee(models.Model):
-    id = models.IntegerField(primary_key=True, unique=True, default=1) 
+    # id = models.IntegerField(primary_key=True, unique=True, default=1) 
     person_id = models.ForeignKey(person, on_delete=models.CASCADE, related_name="person_id")
     company_id = models.ForeignKey(company, on_delete=models.CASCADE, related_name="company_id")
     department_id = models.ForeignKey(department, on_delete=models.CASCADE, related_name="department_id")
@@ -34,7 +34,7 @@ class employee(models.Model):
 
 
 class employee_user(models.Model):
-    id = models.IntegerField(primary_key=True, unique=True, default=1) 
+    # id = models.IntegerField(primary_key=True, unique=True, default=1) 
     employee_id = models.ForeignKey(employee, on_delete=models.CASCADE, related_name="employee_id_employee")
     user_id = models.ForeignKey(user_registration, on_delete=models.CASCADE, related_name="employee_id_user")
     is_active = models.BooleanField(default=True)
