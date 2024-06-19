@@ -12,8 +12,8 @@ class position(models.Model):
 class person(models.Model):
     # id = models.IntegerField(primary_key=True, unique=True, default=1) 
     document_type_id = models.ForeignKey(document_type, on_delete=models.CASCADE, related_name="document_type_id")
-    first_name = models.CharField(max_length=5000)
-    last_name = models.CharField(max_length=5000)
+    first_name = models.CharField(max_length=5000, blank=True, null=True)
+    last_name = models.CharField(max_length=5000, blank=True, null=True)
     dob = models.DateField(auto_now=False, auto_now_add=False)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(user_registration, on_delete=models.CASCADE, related_name="created_by_user")

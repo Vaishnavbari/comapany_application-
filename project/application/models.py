@@ -4,14 +4,14 @@ from user_application.models import user_registration
 
 # Create your models here.
 class applications(models.Model) :  
-   id = models.IntegerField(primary_key=True, unique=True, default=1)
+   # id = models.IntegerField(primary_key=True, unique=True, default=1)
    code = models.CharField(max_length=50, unique=True)
    name = models.CharField(max_length=50)
    is_active = models.BooleanField(default=True)
     
 
 class application_access(models.Model) :
-   id = models.IntegerField(primary_key=True, unique=True, default=1)
+   # id = models.IntegerField(primary_key=True, unique=True, default=1)
    application_id = models.ForeignKey(applications, on_delete=models.CASCADE, related_name="user_application_id")
    user_id = models.ForeignKey(user_registration, on_delete=models.CASCADE, related_name="user_id")
    is_active = models.BooleanField(default=True)
@@ -24,7 +24,7 @@ class application_access(models.Model) :
  
 
 class application_role(models.Model) :
-    id = models.IntegerField(primary_key=True, unique=True, default=1)
+   #  id = models.IntegerField(primary_key=True, unique=True, default=1)
     application_id = models.ForeignKey(applications, on_delete=models.CASCADE, related_name="application")
     code = models.CharField(max_length=50)
     description = models.CharField(max_length=400)
@@ -32,7 +32,7 @@ class application_role(models.Model) :
 
 
 class application_feature_category(models.Model) :
-  id = models.IntegerField(primary_key=True, unique=True, default=1)
+#   id = models.IntegerField(primary_key=True, unique=True, default=1)
   application_id = models.ForeignKey(applications, on_delete=models.CASCADE,related_name="application_id")
   code = models.CharField(max_length=50)
   description = models.CharField(max_length=400)
@@ -40,7 +40,7 @@ class application_feature_category(models.Model) :
 
 
 class application_feature(models.Model) :
-  id = models.IntegerField(primary_key=True, unique=True, default=1)
+#   id = models.IntegerField(primary_key=True, unique=True, default=1)
   feature_category_id = models.ForeignKey(application_feature_category, on_delete=models.CASCADE, related_name="feature_category_id")
   code = models.CharField(max_length=200)
   description = models.CharField(max_length=400)
