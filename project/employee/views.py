@@ -25,21 +25,21 @@ class CreateUpdateDeletePerson(APIView):
         return Response({"message":"Person created successfully", "data":serializer.data}, status=status.HTTP_201_CREATED)
     
     def put(self, request, id):
-
-        person_id = person.objects.filter(id=id).first()
+            
+        person_id = person.objects.filter(id=id,created_by=request.user.id).first()
 
         if not person_id:
-            return Response({"message": "Person not found"}, status=status.HTTP_404_NOT_FOUND)
-        
-        serializer = PersonSerializers(instance=person_id, data=request.data)
+            return Response({"message": "Person not found or you dont have permission"}, status=status.HTTP_404_NOT_FOUND)
+    
+        serializer = PersonSerializers(instance=person_id, data=request.data, context={'user': request.user})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"message": "Person updated successfully", "data":serializer.data}, status=status.HTTP_200_OK)
     
-    def delete(self, request, id):
-        person_id = person.objects.filter(id=id).first()
+    def delete(self,request, id):
+        person_id = person.objects.filter(id=id,created_by=request.user.id).first()
         if not person_id:
-            return Response({"message": "Person not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": "Person not found or you dont have permission"}, status=status.HTTP_404_NOT_FOUND)
         person_id.delete()
         return Response({"message": "Person deleted successfully"}, status=status.HTTP_200_OK)
     

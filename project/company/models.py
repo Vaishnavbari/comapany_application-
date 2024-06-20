@@ -9,6 +9,9 @@ class document_type(models.Model):
     name = models.CharField(max_length=50, blank=True, null=True)
     description = models.CharField(max_length=400, blank=True, null=True)
 
+    def __str__(self) -> str:
+        return self.code
+
 
 class company(models.Model):
     # id = models.IntegerField(primary_key=True, unique=True, default=1) 
@@ -17,6 +20,9 @@ class company(models.Model):
     legan_name = models.CharField(max_length=50, blank=True, null=True)
     commercial_name = models.CharField(max_length=50, blank=True, null=True)
     created_at = models.DateTimeField(auto_now=True) 
+
+    def __str__(self) -> str:
+        return self.id_number
 
 
 class site_category(models.Model):
@@ -47,7 +53,7 @@ class company_provider(models.Model):
     provider_company_id = models.ForeignKey(company, on_delete=models.CASCADE, related_name="provider_company_id")
     is_active =models.BooleanField(default=True)
     registered_at = models.DateTimeField(auto_now=False, auto_now_add=False)
-    registered_by = models.ForeignKey(user_registration, on_delete=models.CASCADE, related_name="company_provider_registered_by")
-    authorized_by = models.ForeignKey(user_registration, on_delete=models.CASCADE, related_name="company_provider_authorized_by")
-
+    registered_by = models.ForeignKey(user_registration, on_delete=models.CASCADE, related_name="company_provider_registered_by", blank=True, null=True)
+    authorized_by = models.ForeignKey(user_registration, on_delete=models.CASCADE, related_name="company_provider_authorized_by", blank=True, null=True)
+ 
 

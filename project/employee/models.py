@@ -14,7 +14,7 @@ class person(models.Model):
     document_type_id = models.ForeignKey(document_type, on_delete=models.CASCADE, related_name="document_type_id")
     first_name = models.CharField(max_length=5000, blank=True, null=True)
     last_name = models.CharField(max_length=5000, blank=True, null=True)
-    dob = models.DateField(auto_now=False, auto_now_add=False)
+    dob = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(user_registration, on_delete=models.CASCADE, related_name="created_by_user")
 

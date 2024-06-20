@@ -69,6 +69,9 @@ class LoginUserView(APIView):
         username = serializer.data.get('username')
         password = serializer.data.get('password')
         
+        if not username or not password:
+            return Response({"message": "Please provide both username and password"}, status=status.HTTP_400_BAD_REQUEST)
+
         user = authenticate(request, username=username, password=password)
         if not user:
             return Response({'errors': {'non_field_errors': ['username or password not found..!']}}, status=status.HTTP_404_NOT_FOUND)

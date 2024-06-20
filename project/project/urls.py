@@ -23,4 +23,6 @@ urlpatterns = [
     path("application/",include("application.urls")),
     path("employee/",include("employee.urls")),
     path("company/",include("company.urls")),
+    path("services/",include("services.urls")),
+
 ]
