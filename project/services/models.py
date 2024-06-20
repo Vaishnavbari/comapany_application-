@@ -10,7 +10,9 @@ class service_category(models.Model):
     short_description = models.TextField(max_length=5000)
     long_description = models.TextField(max_length=50000)
     is_active = models.BooleanField(default=True)
-
+    
+    def __str__(self):
+        return self.code 
 
 class company_provider_service_category(models.Model):
     # id = models.IntegerField(primary_key=True, unique=True, default=1)
@@ -23,6 +25,9 @@ class service_status(models.Model):
     # id = models.IntegerField(primary_key=True, unique=True, default=1)
     code = models.CharField(max_length=50, unique=True)
     description = models.TextField(max_length=5000)
+
+    def __str__(self):
+        return self.code 
   
 
 class service(models.Model):
@@ -44,5 +49,7 @@ class service(models.Model):
     created_by = models.ForeignKey(user_registration, on_delete=models.CASCADE, related_name="company_created_by_id")
     modified_at = models.DateTimeField(auto_now=True)
     modified_by = models.ForeignKey(user_registration, on_delete=models.CASCADE, related_name="company_modified_by_id")
-
+    
+    def __str__(self):
+        return self.service_uuid 
 

@@ -18,7 +18,7 @@ from project.JwtAuthorization import JWTAuthorization
 
 class CreateUpdateDeleteApplication(APIView):
 
-    # permission_classes=[JWTAuthorization]
+    permission_classes=[JWTAuthorization]
 
     def post(self, request):
         serializer = ApplicationSerializers(data=request.data)
