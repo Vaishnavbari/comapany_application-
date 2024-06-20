@@ -6,7 +6,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 
-
 # from models and serializers 
 from .models import document_type, company_provider
 from company.serializer import DocumentTypeSerializer, CompanyProviderSerializer
