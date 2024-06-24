@@ -12,6 +12,7 @@ from rest_framework.response import Response
 from .serializer import UserRegistration, LoginSerializer, TokenSerializer
 from .models import user_registration,Token
 from application.models import application_access
+from application.serializer import ApplicationAccessSerializers
 
 # others
 from project.JwtAuthorization import JWTAuthorization
@@ -50,7 +51,7 @@ class UpdateUser(APIView):
         user = user_registration.objects.filter(id=id).first()
         if not user:
             return Response({"message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
-        if user != request.user:
+        if user != request.user or request.user.is_superuser != True:
             return Response({"message": "You dont have an permission"}, status=status.HTTP_401_UNAUTHORIZED)
         serializer = UserRegistration(instance=user, data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -83,3 +84,14 @@ class LoginUserView(APIView):
         SerializeToken=Token.objects.create(access_token=token.get("access"),refresh_token=token.get("refresh"), user=user)
 
         return Response({'message':'Login Successful..!', 'token':TokenSerializer(SerializeToken).data}, status=status.HTTP_200_OK)
+    
+
+class PermissionGrantingView(APIView):
+    
+    # permission_classes = [JWTAuthorization]
+
+    def post(self, request):
+        serializer = ApplicationAccessSerializers(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"message": "Permission granted successfully"}, status=status.HTTP_201_CREATED)

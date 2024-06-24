@@ -43,7 +43,7 @@ class UserManager(BaseUserManager):
             email=self.normalize_email(email),
             username=username,
             access_type='*',
-            access_type_value="*",
+            access_type_value="admin",
             **extra_fields
         )
 

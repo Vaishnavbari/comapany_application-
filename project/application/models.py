@@ -20,6 +20,7 @@ class application_access(models.Model) :
    access_type = models.CharField(max_length=50)
    access_type_value = models.CharField(max_length=50)
    created_at = models.DateTimeField(auto_now_add=True)
+   application_access = models.CharField(max_length=400)
    last_accessed = models.DateTimeField(auto_now_add=True, null=True, blank=True)            
  
 

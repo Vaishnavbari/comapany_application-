@@ -12,19 +12,22 @@ from company.serializer import DocumentTypeSerializer, CompanyProviderSerializer
 
 # from JWTAuthoriazation 
 from project.JwtAuthorization import JWTAuthorization
+from project.utils import ExceptionHandling
 
 # Create your views here.
 
 class CreateUpdateDeleteDocument(APIView):
 
     permission_classes = [JWTAuthorization]
-
+    
+    @ExceptionHandling
     def post(self, request):
         serializer = DocumentTypeSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"message":"Document created successfully", "data":serializer.data}, status=status.HTTP_201_CREATED)
     
+    @ExceptionHandling
     def put(self, request, id):
 
         document_type_id = document_type.objects.filter(id=id).first()
@@ -37,6 +40,7 @@ class CreateUpdateDeleteDocument(APIView):
         serializer.save()
         return Response({"message": "Document updated successfully", "data":serializer.data}, status=status.HTTP_200_OK)
     
+    @ExceptionHandling
     def delete(self, request, id):
         document_type_id = document_type.objects.filter(id=id).first()
         if not document_type_id:
@@ -48,13 +52,15 @@ class CreateUpdateDeleteDocument(APIView):
 class CreateUpdateDeleteCompanyProvider(APIView):
 
     permission_classes=[JWTAuthorization]
-
+    
+    @ExceptionHandling
     def post(self, request):
         serializer = CompanyProviderSerializer(data=request.data, context={"user":request.user})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"message":"Company created successfully", "data":serializer.data}, status=status.HTTP_201_CREATED)
     
+    @ExceptionHandling
     def put(self, request, id):
         company_provider_id = company_provider.objects.filter(id=id,registered_by=request.user).first()
         if not company_provider_id:
@@ -64,7 +70,8 @@ class CreateUpdateDeleteCompanyProvider(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"message":"Company update successfully", "data":serializer.data}, status=status.HTTP_201_CREATED)
-
+    
+    @ExceptionHandling
     def delete(self,request,id):
         company_provider_id = company_provider.objects.filter(id=id,registered_by=request.user).first()
         if not company_provider_id:

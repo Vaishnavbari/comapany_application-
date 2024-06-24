@@ -5,18 +5,21 @@ from rest_framework.response import Response
 from .serializer import CompanyProviderServiceCategorySerializer, ServiceSerializer
 from rest_framework import status
 from project.JwtAuthorization import JWTAuthorization
+from project.utils import ExceptionHandling
 
 # Create your views here.
 class CreateUpdateDeleteCompanyProviderServiceCategory(APIView):
 
     permission_classes=[JWTAuthorization]
-
+    
+    @ExceptionHandling
     def post(self, request):
         serializer = CompanyProviderServiceCategorySerializer(data=request.data, context={'user': request.user})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"message":"Company provider created successfully", "data":serializer.data}, status=status.HTTP_201_CREATED)
     
+    @ExceptionHandling
     def put(self, request, id):
             
         data_id = company_provider_service_category.objects.filter(id=id).first()
@@ -29,6 +32,7 @@ class CreateUpdateDeleteCompanyProviderServiceCategory(APIView):
         serializer.save()
         return Response({"message": "company_provider service category updated successfully", "data":serializer.data}, status=status.HTTP_200_OK)
     
+    @ExceptionHandling
     def delete(self, request, id):
         
         data_id = company_provider_service_category.objects.filter(id=id).first()
@@ -42,13 +46,15 @@ class CreateUpdateDeleteCompanyProviderServiceCategory(APIView):
 class CreateUpdateDeleteService(APIView):
 
     permission_classes=[JWTAuthorization]
-
+    
+    @ExceptionHandling
     def post(self, request):
         serializer = ServiceSerializer(data=request.data, context={'user': request.user})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"message":"Service created successfully", "data":serializer.data}, status=status.HTTP_201_CREATED)
     
+    @ExceptionHandling
     def put(self, request, id):
             
         data_id = service.objects.filter(id=id).first()
@@ -61,6 +67,7 @@ class CreateUpdateDeleteService(APIView):
         serializer.save()
         return Response({"message": "Service updated successfully", "data":serializer.data}, status=status.HTTP_200_OK)
     
+    @ExceptionHandling
     def delete(self, request, id):
         
         data_id = service.objects.filter(id=id).first()

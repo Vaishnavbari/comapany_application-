@@ -12,17 +12,20 @@ from employee.serializer import PersonSerializers
 
 # from JWTAuthoriazation 
 from project.JwtAuthorization import JWTAuthorization
+from project.utils import ExceptionHandling
 
 class CreateUpdateDeletePerson(APIView):
 
     permission_classes=[JWTAuthorization]
-
+    
+    @ExceptionHandling
     def post(self, request):
         serializer = PersonSerializers(data=request.data, context={'user': request.user})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"message":"Person created successfully", "data":serializer.data}, status=status.HTTP_201_CREATED)
     
+    @ExceptionHandling
     def put(self, request, id):
             
         person_id = person.objects.filter(id=id,created_by=request.user.id).first()
@@ -35,6 +38,7 @@ class CreateUpdateDeletePerson(APIView):
         serializer.save()
         return Response({"message": "Person updated successfully", "data":serializer.data}, status=status.HTTP_200_OK)
     
+    @ExceptionHandling
     def delete(self,request, id):
         person_id = person.objects.filter(id=id,created_by=request.user.id).first()
         if not person_id:

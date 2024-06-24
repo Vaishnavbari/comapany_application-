@@ -12,19 +12,22 @@ from application.serializer import ApplicationSerializers
 
 # from JWTAuthoriazation 
 from project.JwtAuthorization import JWTAuthorization
+from project.utils import ExceptionHandling
 
 # Create your views here.
 
 class CreateUpdateDeleteApplication(APIView):
 
     permission_classes=[JWTAuthorization]
-
+    
+    @ExceptionHandling
     def post(self, request):
         serializer = ApplicationSerializers(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"message":"Application created successfully", "data":serializer.data}, status=status.HTTP_201_CREATED)
     
+    @ExceptionHandling
     def put(self, request, id):
 
         application_id = applications.objects.filter(id=id).first()
@@ -37,6 +40,7 @@ class CreateUpdateDeleteApplication(APIView):
         serializer.save()
         return Response({"message": "Application updated successfully", "data":serializer.data}, status=status.HTTP_200_OK)
     
+    @ExceptionHandling
     def delete(self, request, id):
         application_id = applications.objects.filter(id=id).first()
         if not application_id:
