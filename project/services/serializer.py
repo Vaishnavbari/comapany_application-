@@ -4,8 +4,6 @@ from user_application.models import user_registration
 
 
 class CompanyProviderServiceCategorySerializer(serializers.Serializer):
-    company_provider_id = serializers.PrimaryKeyRelatedField(queryset = company_provider.objects.all(),error_messages={'does_not_exist': "company provider does not exist "})
-    service_category_id = serializers.PrimaryKeyRelatedField(queryset = service_category.objects.all(),error_messages={'does_not_exist': "service_category does not exist "})
     
     class Meta:
         model = company_provider_service_category
@@ -21,28 +19,34 @@ class CompanyProviderServiceCategorySerializer(serializers.Serializer):
         return instance
     
 class ServiceSerializer(serializers.ModelSerializer):
-    company_id = serializers.PrimaryKeyRelatedField(queryset = company.objects.all(),error_messages={'does_not_exist': "company does not exist "})
-    company_provider_id = serializers.PrimaryKeyRelatedField(queryset = company_provider.objects.all(),error_messages={'does_not_exist': "company provider does not exist "})
-    service_category_id = serializers.PrimaryKeyRelatedField(queryset = service_category.objects.all(),error_messages={'does_not_exist': "service category does not exist "})
-    company_site_id = serializers.PrimaryKeyRelatedField(queryset = company_site.objects.all(),error_messages={'does_not_exist': "company site does not exist "})
-    service_status_id = serializers.PrimaryKeyRelatedField(queryset = service_status.objects.all(),error_messages={'does_not_exist': "service does not exist "})
     prospective_start_date = serializers.DateTimeField()
     prospective_end_date = serializers.DateTimeField()
     start_datetime = serializers.DateTimeField()
     end_datetime = serializers.DateTimeField()
     comments = serializers.CharField()
-    contact_user_id = serializers.PrimaryKeyRelatedField(queryset = user_registration.objects.all(),error_messages={'does_not_exist': "User does not exist "})
     contact_phone = serializers.CharField()  
-    created_by = serializers.PrimaryKeyRelatedField(queryset = user_registration.objects.all(),error_messages={'does_not_exist': "User does not exist "})
-    modified_by = serializers.PrimaryKeyRelatedField(queryset = user_registration.objects.all(),error_messages={'does_not_exist': "User does not exist "})
+
 
     class Meta:
         model = service
         fields = "__all__"
 
     def create(self, validated_data):
+        user=self.context.get("user")
+        company_id = validated_data.get("company_id")
+        service_category_id = validated_data.get("service_category_id")
+        company_site_id = validated_data.get("company_site_id")
+        service_status_id = validated_data.get("service_status_id")
+        prospective_start_date = validated_data.get("prospective_start_date")
+        prospective_end_date = validated_data.get("prospective_end_date")
+        start_datetime = validated_data.get("start_datetime")
+        end_datetime = validated_data.get("end_datetime")
+        comments = validated_data.get("comments")
+        contact_phone = validated_data.get("contact_phone")
 
+        # return service.objects.create(company_id=company_id,company_provider_id=user,service_category_id=service_category_id,company_site_id=company_site_id,service_status_id=service_status_id,prospective_start_date=prospective_start_date,prospective_end_date=prospective_end_date,start_datetime=start_datetime,end_datetime=end_datetime,comments=comments,contact_phone=contact_phone,created_by=user.id,modified_by=user.id)
         return service.objects.create(**validated_data)
+
     
     def update(self, instance, validated_data):
         instance.company_id = validated_data.get("company_id", instance.company_id)

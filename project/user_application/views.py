@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from .serializer import UserRegistration, LoginSerializer, TokenSerializer
 from .models import user_registration,Token
 from application.models import application_access
-from application.serializer import ApplicationAccessSerializers
+from application.serializer import ApplicationAccessSerializer
 
 # others
 from project.JwtAuthorization import JWTAuthorization
@@ -91,7 +91,7 @@ class PermissionGrantingView(APIView):
     # permission_classes = [JWTAuthorization]
 
     def post(self, request):
-        serializer = ApplicationAccessSerializers(data=request.data)
+        serializer = ApplicationAccessSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"message": "Permission granted successfully"}, status=status.HTTP_201_CREATED)

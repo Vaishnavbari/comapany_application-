@@ -1,5 +1,6 @@
 from django.db import models
 from user_application.models import user_registration
+from company.models import company
 
 
 # Create your models here.
@@ -9,10 +10,13 @@ class applications(models.Model) :
    name = models.CharField(max_length=50)
    is_active = models.BooleanField(default=True)
     
+   def __str__(self) -> str:
+      return self.name
 
 class application_access(models.Model) :
    # id = models.IntegerField(primary_key=True, unique=True, default=1)
-   application_id = models.ForeignKey(applications, on_delete=models.CASCADE, related_name="user_application_id")
+   application_id = models.ForeignKey(applications, on_delete=models.CASCADE, related_name="user_application_id" )
+   # company_id = models.ForeignKey(company, on_delete=models.CASCADE, related_name="User_company_id")
    user_id = models.ForeignKey(user_registration, on_delete=models.CASCADE, related_name="user_id")
    is_active = models.BooleanField(default=True)
    valid_from = models.DateTimeField(auto_now=False, auto_now_add=False)
