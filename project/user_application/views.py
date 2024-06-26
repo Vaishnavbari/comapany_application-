@@ -11,7 +11,6 @@ from rest_framework.response import Response
 # from models and serializers 
 from .serializer import UserRegistration, LoginSerializer, TokenSerializer
 from .models import user_registration,Token
-from application.models import application_access
 from application.serializer import ApplicationAccessSerializer
 
 # others
@@ -88,7 +87,7 @@ class LoginUserView(APIView):
 
 class PermissionGrantingView(APIView):
     
-    # permission_classes = [JWTAuthorization]
+    permission_classes = [JWTAuthorization]
 
     def post(self, request):
         serializer = ApplicationAccessSerializer(data=request.data)
