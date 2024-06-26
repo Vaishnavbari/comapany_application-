@@ -85,7 +85,7 @@ class ServiceSerializer(serializers.ModelSerializer):
         end_datetime = validated_data.get("end_datetime")
         comments = validated_data.get("comments")
         contact_phone = validated_data.get("contact_phone")
-        return service.objects.create(company_id=check_company.first(),company_provider_id=check_company_provider.first(),service_category_id=service_category_id,company_site_id=company_site_id,service_status_id=service_status_id,prospective_start_date=prospective_start_date,prospective_end_date=prospective_end_date,start_datetime=start_datetime,end_datetime=end_datetime,comments=comments,contact_phone=contact_phone,contact_user_id=user,created_by=user,modified_by=user)
+        return service.objects.create(company_id=check_company.first(), company_provider_id=check_company_provider.first(), service_category_id=service_category_id, company_site_id=company_site_id,service_status_id=service_status_id, prospective_start_date=prospective_start_date, prospective_end_date=prospective_end_date, start_datetime=start_datetime, end_datetime=end_datetime,comments=comments, contact_phone=contact_phone, contact_user_id=user, created_by=user, modified_by=user)
     
     def update(self, instance, validated_data):
         user=self.context.get("user")

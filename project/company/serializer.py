@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import document_type,company_provider,company
 from company.models import *
 from application.models import application_access
-
+from datetime import datetime
 
 
 class DocumentTypeSerializer(serializers.ModelSerializer):
@@ -49,10 +49,9 @@ class CompanyProviderSerializer(serializers.ModelSerializer):
         provider_company_name = validated_data.get("provider_company_id")
         check_provider = company.objects.filter(legan_name=provider_company_name)
         if not check_provider:
-            raise serializers.ValidationError("provider company not found ")
+            raise serializers.ValidationError("provider company not found")
         
-        registered_at = validated_data.get("registered_at")
-
+        registered_at = datetime.now()
         return company_provider.objects.create(company_id=check_company.first(), provider_company_id=check_provider.first(), registered_at=registered_at, registered_by=user, authorized_by=user)
     
     def update(self, instance, validated_data):
@@ -73,7 +72,7 @@ class CompanyProviderSerializer(serializers.ModelSerializer):
         if not check_provider:
             raise serializers.ValidationError("provider company not found ")
         
-        registered_at = validated_data.get("registered_at")
+        # registered_at = datetime.now()
 
         instance.provider_company_id = validated_data.get("provider_company_id", instance.provider_company_id)
         instance.registered_at = validated_data.get("registered_at", instance.registered_at)
