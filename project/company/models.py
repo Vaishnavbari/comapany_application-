@@ -44,7 +44,7 @@ class company_site(models.Model):
     is_active = models.BooleanField(default=True)
     
     def __str__(self):
-        return self.company_id 
+        return self.name 
 
 class department(models.Model):
     # id = models.IntegerField(primary_key=True, unique=True, default=1)

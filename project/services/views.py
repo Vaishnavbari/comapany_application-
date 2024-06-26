@@ -12,7 +12,7 @@ class CreateUpdateDeleteCompanyProviderServiceCategory(APIView):
 
     permission_classes=[JWTAuthorization]
     
-    @ExceptionHandling
+    # @ExceptionHandling
     def post(self, request):
         serializer = CompanyProviderServiceCategorySerializer(data=request.data, context={'user': request.user})
         serializer.is_valid(raise_exception=True)
@@ -22,7 +22,7 @@ class CreateUpdateDeleteCompanyProviderServiceCategory(APIView):
     @ExceptionHandling
     def put(self, request, id):
             
-        data_id = company_provider_service_category.objects.filter(id=id).first()
+        data_id = company_provider_service_category.objects.filter(id=id,company_provider_id__registered_by=request.user.id).first()
 
         if not data_id:
             return Response({"message": "Company_provider service category not found "}, status=status.HTTP_404_NOT_FOUND)
@@ -54,14 +54,14 @@ class CreateUpdateDeleteService(APIView):
         serializer.save()
         return Response({"message":"Service created successfully", "data":serializer.data}, status=status.HTTP_201_CREATED)
     
-    @ExceptionHandling
+    # @ExceptionHandling
     def put(self, request, id):
             
-        data_id = service.objects.filter(id=id).first()
+        data_id = service.objects.filter(id=id,created_by=request.user.id).first()
 
         if not data_id:
             return Response({"message": "Service not found "}, status=status.HTTP_404_NOT_FOUND)
-    
+        print(">>>>>>>>>>>>>", data_id)
         serializer = ServiceSerializer(instance=data_id, data=request.data, context={'user': request.user}, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()

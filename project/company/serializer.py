@@ -52,12 +52,29 @@ class CompanyProviderSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("provider company not found ")
         
         registered_at = validated_data.get("registered_at")
-        
+
         return company_provider.objects.create(company_id=check_company.first(), provider_company_id=check_provider.first(), registered_at=registered_at, registered_by=user, authorized_by=user)
     
     def update(self, instance, validated_data):
         user = self.context.get("user")
-        instance.company_id = validated_data.get("company_id", instance.company_id)
+        company_id = validated_data.get("company_id")
+
+        check_company = company.objects.filter(legan_name=company_id)
+
+        if not check_company:
+            raise serializers.ValidationError("company not found")
+        
+        user_access = application_access.objects.filter(user_id=user.id, application_access=company_id)
+        if not user_access:
+            raise serializers.ValidationError("you dont have access to this company")
+        
+        provider_company_name = validated_data.get("provider_company_id")
+        check_provider = company.objects.filter(legan_name=provider_company_name)
+        if not check_provider:
+            raise serializers.ValidationError("provider company not found ")
+        
+        registered_at = validated_data.get("registered_at")
+
         instance.provider_company_id = validated_data.get("provider_company_id", instance.provider_company_id)
         instance.registered_at = validated_data.get("registered_at", instance.registered_at)
         instance.is_active = validated_data.get("is_active", instance.is_active)

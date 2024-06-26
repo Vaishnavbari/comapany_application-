@@ -1,20 +1,52 @@
 from rest_framework import serializers
 from .models import company_provider_service_category, company_provider, service_category, service,company, company_site, service_status
 from user_application.models import user_registration
-
+from application.models import application_access
 
 class CompanyProviderServiceCategorySerializer(serializers.Serializer):
-    
+    company_name = serializers.CharField(write_only=True)
+    service_category_code = serializers.CharField()
+    provider_company_name = serializers.CharField(write_only=True)
+
     class Meta:
         model = company_provider_service_category
-        fields = "__all__"
+        fields = ['company_name', 'service_category_code', 'provider_company_name']
 
     def create(self, validated_data):
-        return company_provider_service_category.objects.create(**validated_data)
+        user = self.context.get("user")
+        company_name = validated_data.get("company_name")
+        service_category_code = validated_data.get("service_category_code")
+        provider_company_name = validated_data.get("provider_company_name")
+
+        check_company = company.objects.filter(legan_name=company_name).first()
+        if not check_company:
+            raise serializers.ValidationError("Company not found")
+
+        user_access = company_provider.objects.filter(registered_by=user.id, provider_company_id__legan_name=provider_company_name).first()
+        if not user_access:
+            raise serializers.ValidationError("You don't have access to this company")
+
+        return company_provider_service_category.objects.create(
+            company_provider_id=user_access, 
+            service_category_code=service_category_code
+        )
     
     def update(self, instance, validated_data):
+        user = self.context.get("user")
+        company_name = validated_data.get("company_name")
+        service_category_code = validated_data.get("service_category_code")
+        provider_company_name = validated_data.get("provider_company_name")
+
+        check_company = company.objects.filter(legan_name=company_name).first()
+        if not check_company:
+            raise serializers.ValidationError("Company not found")
+
+        user_access = company_provider.objects.filter(registered_by=user.id, provider_company_id__legan_name=provider_company_name).first()
+        if not user_access:
+            raise serializers.ValidationError("You don't have access to this company")
+        
         instance.company_provider_id = validated_data.get('company_provider_id', instance.company_provider_id)
-        instance.service_category_id = validated_data.get('service_category_id', instance.service_category_id)
+        instance.service_category_code = validated_data.get('service_category_code', instance.service_category_code)
         instance.save()
         return instance
     
@@ -24,16 +56,26 @@ class ServiceSerializer(serializers.ModelSerializer):
     start_datetime = serializers.DateTimeField()
     end_datetime = serializers.DateTimeField()
     comments = serializers.CharField()
-    contact_phone = serializers.CharField()  
-
+    contact_phone = serializers.CharField()
+    created_by = serializers.CharField(required=False)
+    modified_by = serializers.CharField(required=False)
 
     class Meta:
         model = service
         fields = "__all__"
-
+    
     def create(self, validated_data):
         user=self.context.get("user")
         company_id = validated_data.get("company_id")
+        check_company = company.objects.filter(id=company_id.id)
+        if not check_company:
+            raise serializers.ValidationError("Company not found")
+        
+        company_provider_id = validated_data.get("company_provider_id")
+        check_company_provider = company_provider.objects.filter(id=company_provider_id.id,registered_by=user)
+        if not check_company_provider:
+            raise serializers.ValidationError("Company provider not found")
+        
         service_category_id = validated_data.get("service_category_id")
         company_site_id = validated_data.get("company_site_id")
         service_status_id = validated_data.get("service_status_id")
@@ -43,12 +85,22 @@ class ServiceSerializer(serializers.ModelSerializer):
         end_datetime = validated_data.get("end_datetime")
         comments = validated_data.get("comments")
         contact_phone = validated_data.get("contact_phone")
-
-        # return service.objects.create(company_id=company_id,company_provider_id=user,service_category_id=service_category_id,company_site_id=company_site_id,service_status_id=service_status_id,prospective_start_date=prospective_start_date,prospective_end_date=prospective_end_date,start_datetime=start_datetime,end_datetime=end_datetime,comments=comments,contact_phone=contact_phone,created_by=user.id,modified_by=user.id)
-        return service.objects.create(**validated_data)
-
+        return service.objects.create(company_id=check_company.first(),company_provider_id=check_company_provider.first(),service_category_id=service_category_id,company_site_id=company_site_id,service_status_id=service_status_id,prospective_start_date=prospective_start_date,prospective_end_date=prospective_end_date,start_datetime=start_datetime,end_datetime=end_datetime,comments=comments,contact_phone=contact_phone,contact_user_id=user,created_by=user,modified_by=user)
     
     def update(self, instance, validated_data):
+        user=self.context.get("user")
+        company_id = validated_data.get("company_id")
+        if company_id:
+            check_company = company.objects.filter(id=company_id.id)
+            if not check_company:
+                raise serializers.ValidationError("Company not found")
+        
+        company_provider_id = validated_data.get("company_provider_id")
+        if company_provider_id:
+
+            check_company_provider = company_provider.objects.filter(id=company_provider_id.id,registered_by=user)
+            if not check_company_provider:
+                raise serializers.ValidationError("Company provider not found")
         instance.company_id = validated_data.get("company_id", instance.company_id)
         instance.company_provider_id = validated_data.get("company_provider_id", instance.company_provider_id)
         instance.service_category_id = validated_data.get("service_category_id", instance.service_category_id)

@@ -17,7 +17,8 @@ class service_category(models.Model):
 class company_provider_service_category(models.Model):
     # id = models.IntegerField(primary_key=True, unique=True, default=1)
     company_provider_id = models.ForeignKey(company_provider, on_delete=models.CASCADE, related_name="company_provider_id")
-    service_category_id = models.ForeignKey(service_category, on_delete=models.CASCADE, related_name="service_category_id")
+    # service_category_id = models.ForeignKey(service_category, on_delete=models.CASCADE, related_name="service_category_id")
+    service_category_code = models.CharField(max_length=50)
     is_active = models.BooleanField(default=True)
 
 
@@ -51,5 +52,5 @@ class service(models.Model):
     modified_by = models.ForeignKey(user_registration, on_delete=models.CASCADE, related_name="company_modified_by_id")
     
     def __str__(self):
-        return self.service_uuid 
+        return self.comments 
 
