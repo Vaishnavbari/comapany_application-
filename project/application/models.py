@@ -15,7 +15,7 @@ class applications(models.Model) :
 
 class application_access(models.Model) :
    # id = models.IntegerField(primary_key=True, unique=True, default=1)
-   application_id = models.ForeignKey(applications, on_delete=models.CASCADE, related_name="user_application_id" )
+   application_id = models.ForeignKey(applications, on_delete=models.CASCADE, related_name="user_application_id")
    # company_id = models.ForeignKey(company, on_delete=models.CASCADE, related_name="User_company_id")
    user_id = models.ForeignKey(user_registration, on_delete=models.CASCADE, related_name="user_id")
    is_active = models.BooleanField(default=True)

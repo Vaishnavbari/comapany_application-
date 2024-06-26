@@ -53,7 +53,7 @@ class CreateUpdateDeleteCompanyProvider(APIView):
 
     permission_classes=[JWTAuthorization]
     
-    @ExceptionHandling
+    # @ExceptionHandling
     def post(self, request):
         serializer = CompanyProviderSerializer(data=request.data, context={"user":request.user})
         serializer.is_valid(raise_exception=True)

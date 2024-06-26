@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import service_category, company_site, service_status, company_provider
+from .models import service_category, company_site, service_status
 from company.models import site_category
 
 # Register your models here.
@@ -18,9 +18,9 @@ class ServiceStatusAdmin(admin.ModelAdmin):
    list_display = ['code','description']
 
 
-@admin.register(company_provider)
-class CompanyProviderAdmin(admin.ModelAdmin):
-    list_display = ['company_id', 'provider_company_id', 'registered_at', "registered_by", "authorized_by"]
+# @admin.register(company_provider)
+# class CompanyProviderAdmin(admin.ModelAdmin):
+#     list_display = ['company_id', 'provider_company_id', 'registered_at', "registered_by", "authorized_by"]
 
 
 @admin.register(site_category)

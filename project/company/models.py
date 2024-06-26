@@ -22,7 +22,8 @@ class company(models.Model):
     created_at = models.DateTimeField(auto_now=True) 
 
     def __str__(self) -> str:
-        return self.document_type_id
+        return self.legan_name
+
 
 
 class site_category(models.Model):
@@ -55,10 +56,11 @@ class department(models.Model):
 
 class company_provider(models.Model):
     # id = models.IntegerField(primary_key=True, unique=True, default=1)
-    company_id =models.ForeignKey(company, on_delete=models.CASCADE, related_name="company_id_by")
-    provider_company_id = models.ForeignKey(company, on_delete=models.CASCADE, related_name="provider_company_id")
+    # company_name= models.CharField(max_length=20)
+    company_id =models.ForeignKey(company, on_delete=models.CASCADE, related_name="company_id_by", blank=True, null=True)
+    provider_company_id = models.ForeignKey(company, on_delete=models.CASCADE, related_name="provider_company_id", blank=True, null=True)
     is_active =models.BooleanField(default=True)
-    registered_at = models.DateTimeField(auto_now=False, auto_now_add=False)
+    registered_at = models.DateTimeField(auto_now=False, auto_now_add=False, blank=True, null=True)
     registered_by = models.ForeignKey(user_registration, on_delete=models.CASCADE, related_name="company_provider_registered_by", blank=True, null=True)
     authorized_by = models.ForeignKey(user_registration, on_delete=models.CASCADE, related_name="company_provider_authorized_by", blank=True, null=True)
  
