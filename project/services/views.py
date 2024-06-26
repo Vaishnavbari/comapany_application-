@@ -54,14 +54,14 @@ class CreateUpdateDeleteService(APIView):
         serializer.save()
         return Response({"message":"Service created successfully", "data":serializer.data}, status=status.HTTP_201_CREATED)
     
-    # @ExceptionHandling
+    @ExceptionHandling
     def put(self, request, id):
             
         data_id = service.objects.filter(id=id,created_by=request.user.id).first()
 
         if not data_id:
             return Response({"message": "Service not found "}, status=status.HTTP_404_NOT_FOUND)
-        print(">>>>>>>>>>>>>", data_id)
+        
         serializer = ServiceSerializer(instance=data_id, data=request.data, context={'user': request.user}, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
