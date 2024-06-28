@@ -15,8 +15,8 @@ class applications(models.Model) :
 
 class application_access(models.Model) :
    # id = models.IntegerField(primary_key=True, unique=True, default=1)
-   application_id = models.ForeignKey(applications, on_delete=models.CASCADE, related_name="user_application_id")
-   # company_id = models.ForeignKey(company, on_delete=models.CASCADE, related_name="User_company_id")
+   application_id = models.ForeignKey(applications, on_delete=models.CASCADE, related_name="user_application_id", default=None, blank=True, null=True)
+   company_id = models.ForeignKey(company, on_delete=models.CASCADE, related_name="User_company_id", default=None, null=True, blank=True)
    user_id = models.ForeignKey(user_registration, on_delete=models.CASCADE, related_name="user_id")
    is_active = models.BooleanField(default=True)
    valid_from = models.DateTimeField(auto_now=False, auto_now_add=False)

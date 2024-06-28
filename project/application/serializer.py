@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import applications, application_access
+from company.models import company
 from user_application.models import user_registration
 import json
 from django.db.models import Q
@@ -92,13 +93,18 @@ class ApplicationAccessSerializer(serializers.ModelSerializer):
                     company_name = application_dict.get("company")
                     application_name = application_dict.get("application")
 
-                    check_company_exist = applications.objects.filter(name=company_name) and applications.objects.filter(name=application_name)
+                    check_company_exist = company.objects.filter(legan_name=company_name) 
                     if not check_company_exist.exists():
-                        raise serializers.ValidationError(f"Application {application_name} does not exist and company {company_name} does not exist ")
-                    application_id = check_company_exist.first()
-                    if company_name :  
+                        raise serializers.ValidationError(f"company {company_name} does not exist ")
+                    
+                    check_application_exist = applications.objects.filter(name=application_name) 
+                    if not check_company_exist.exists():
+                        raise serializers.ValidationError(f"Application {application_name} does not exist ")
+                    
+                    company_id = check_company_exist.first()
+                    if company_name:  
                         instance = application_access.objects.create(   
-                            application_id=application_id,
+                            company_id=company_id,
                             user_id=user_data,
                             application_access=company_name,
                             valid_from=valid_from,
@@ -107,6 +113,8 @@ class ApplicationAccessSerializer(serializers.ModelSerializer):
                             access_type_value=access_type_value
                         )
                         instances.append(instance)
+                    
+                    application_id = check_application_exist.first()
 
                     if application_name:
                         
@@ -129,12 +137,12 @@ class ApplicationAccessSerializer(serializers.ModelSerializer):
             
             for application_dict in application_access_list:
                 company_name = application_dict.get("company")
-                check_company_exist = applications.objects.filter(name=company_name)
+                check_company_exist = company.objects.filter(legan_name=company_name)
                 if  not check_company_exist.exists():
                     raise serializers.ValidationError(f"company {company_name} does not exist")
-                application_id = check_company_exist.first()
+                company_id = check_company_exist.first()
                 instance = application_access.objects.create(
-                    application_id=application_id,  
+                    company_id=company_id,  
                     user_id=user_data,
                     application_access=company_name,
                     valid_from=valid_from,

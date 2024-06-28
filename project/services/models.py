@@ -49,7 +49,7 @@ class service(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(user_registration, on_delete=models.CASCADE, related_name="company_created_by_id")
     modified_at = models.DateTimeField(auto_now=True)
-    modified_by = models.ForeignKey(user_registration, on_delete=models.CASCADE, related_name="company_modified_by_id")
+    modified_by = models.ForeignKey(user_registration, on_delete=models.CASCADE, related_name="company_modified_by_id", blank=True, null=True)
     
     def __str__(self):
         return self.comments 
