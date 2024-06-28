@@ -33,7 +33,7 @@ class CreateUpdateDeletePerson(APIView):
         if not person_id:
             return Response({"message": "Person not found or you dont have permission"}, status=status.HTTP_404_NOT_FOUND)
     
-        serializer = PersonSerializers(instance=person_id, data=request.data, context={'user': request.user})
+        serializer = PersonSerializers(instance=person_id, data=request.data, context={'user': request.user}, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"message": "Person updated successfully", "data":serializer.data}, status=status.HTTP_200_OK)
