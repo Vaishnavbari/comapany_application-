@@ -14,7 +14,8 @@ class DocumentTypeSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         if document_type.objects.filter(code=validated_data.get("code")).exists():
             raise serializers.ValidationError({"code": "Document type with this code already exists."})
-        return document_type.objects.create(**validated_data)
+        document, is_created = document_type.objects.get_or_create(**validated_data)
+        return document
     
     def update(self, instance, validated_data):
         if document_type.objects.filter(code=validated_data.get("code")).exists():
@@ -37,12 +38,15 @@ class CompanyProviderSerializer(serializers.ModelSerializer):
 
         user = self.context.get("user")
         company_id = validated_data.get("company_id")
+        if not company_id :
+            raise serializers.ValidationError({"company_id": "Company id is required."})
+        
         check_company = company.objects.filter(legan_name=company_id)
 
         if not check_company:
             raise serializers.ValidationError("company not found")
         
-        user_access = CheckCompanyAccess(user.id,company_id)
+        user_access = CheckCompanyAccess(user_id=user.id, company_id=company_id)
         # user_access = application_access.objects.filter(user_id=user.id, application_access=company_id)
         if not user_access:
             raise serializers.ValidationError("you dont have access to this company")
@@ -53,26 +57,30 @@ class CompanyProviderSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("provider company not found")
         
         registered_at = datetime.now()
-        return company_provider.objects.create(company_id=check_company.first(), provider_company_id=check_provider.first(), registered_at=registered_at, registered_by=user, authorized_by=user)
+        company_providers, is_created = company_provider.objects.get_or_create(company_id=check_company.first(), provider_company_id=check_provider.first(), registered_at=registered_at, registered_by=user, authorized_by=user)
+    
+        return company_providers
     
     def update(self, instance, validated_data):
         user = self.context.get("user")
         company_id = validated_data.get("company_id")
+        if company_id : 
+            check_company = company.objects.filter(legan_name=company_id)
 
-        check_company = company.objects.filter(legan_name=company_id)
+            if not check_company:
+                raise serializers.ValidationError("company not found")
+            
+            user_access = CheckCompanyAccess(user_id=user.id, company_id=company_id)
 
-        if not check_company:
-            raise serializers.ValidationError("company not found")
-        
-        user_access = CheckCompanyAccess(user.id, company_id)
-
-        if not user_access:
-            raise serializers.ValidationError("you dont have access to this company")
-        
+            if not user_access:
+                raise serializers.ValidationError("you dont have access to this company")
+            
         provider_company_name = validated_data.get("provider_company_id")
-        check_provider = company.objects.filter(legan_name=provider_company_name)
-        if not check_provider:
-            raise serializers.ValidationError("provider company not found ")
+        if provider_company_name :
+            provider_company_name = validated_data.get("provider_company_id")
+            check_provider = company.objects.filter(legan_name=provider_company_name)
+            if not check_provider:
+                raise serializers.ValidationError("provider company not found ")
         
         # registered_at = datetime.now()
 

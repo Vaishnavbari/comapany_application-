@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import serializers
 from application.models import application_access
+from company.models import company_provider, company
 def ExceptionHandling(func):
 
     @wraps(func)
@@ -23,9 +24,13 @@ def ExceptionHandling(func):
     return inner
 
 
-def CheckCompanyAccess(user_id,company_id):
-
-    user_access = application_access.objects.filter(user_id=user_id ,application_access=company_id)
-        
-    return user_access
+def CheckCompanyAccess(user_id=None, company_id=None, company_name=None):
+    
+    if user_id and company_id:
+        user_access = application_access.objects.filter(user_id=user_id ,application_access=company_id)
+        return user_access
+    
+    if company_name :
+        check_company = company.objects.filter(legan_name=company_name).first()
+        return check_company
     

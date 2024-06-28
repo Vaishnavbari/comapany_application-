@@ -3,7 +3,7 @@ from .models import applications, application_access
 from company.models import company
 from user_application.models import user_registration
 import json
-from django.db.models import Q
+
 class ApplicationSerializers(serializers.ModelSerializer):
 
     class Meta:
@@ -43,7 +43,6 @@ class ApplicationAccessSerializer(serializers.ModelSerializer):
         if not user_data:
             raise serializers.ValidationError("User does not exist")
 
-        
         application_access_list = json.loads(validated_data.get("application_access", []))
 
         def check_company_key(dict_list):
@@ -54,11 +53,11 @@ class ApplicationAccessSerializer(serializers.ModelSerializer):
         
         def check_application_and_company_keys(dict_list):
             return all('application' in d and 'company' in d for d in dict_list)
-
         
         instances = []
     
         if access_type == "application" :
+
             if access_type_value == "*" :
                   
                 application_name = check_application_key(application_access_list)
@@ -72,7 +71,7 @@ class ApplicationAccessSerializer(serializers.ModelSerializer):
                     if not check_application_exist.exists():
                         raise serializers.ValidationError(f"Application {application_name} does not exist")
                     application_id = check_application_exist.first()
-                    instance = application_access.objects.create(
+                    instance, is_created = application_access.objects.get_or_create(
                         application_id=application_id,
                         user_id=user_data,
                         application_access=application_name,
@@ -103,7 +102,7 @@ class ApplicationAccessSerializer(serializers.ModelSerializer):
                     
                     company_id = check_company_exist.first()
                     if company_name:  
-                        instance = application_access.objects.create(   
+                        instance, is_created = application_access.objects.get_or_create(   
                             company_id=company_id,
                             user_id=user_data,
                             application_access=company_name,
@@ -129,7 +128,7 @@ class ApplicationAccessSerializer(serializers.ModelSerializer):
                         )
                         instances.append(instance)
     
-        if access_type == "company" and access_type_value=="*":
+        if access_type == "company" and access_type_value == "*":
             company_name = check_company_key(application_access_list)
 
             if not company_name:

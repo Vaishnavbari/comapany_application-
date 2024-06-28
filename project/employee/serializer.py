@@ -17,7 +17,8 @@ class PersonSerializers(serializers.ModelSerializer):
         last_name = validated_data.get("last_name")
         dob = validated_data.get("dob")
         document_type_id = validated_data.get("document_type_id")
-        return person.objects.create(first_name=first_name, last_name=last_name, dob=dob, document_type_id=document_type_id, created_by=user)
+        persons, is_created = person.objects.create(first_name=first_name, last_name=last_name, dob=dob, document_type_id=document_type_id, created_by=user)
+        return persons
     
     def update(self, instance, validated_data):
         instance.first_name = validated_data.get('first_name', instance.first_name)
