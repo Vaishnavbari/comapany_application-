@@ -44,7 +44,7 @@ class service(models.Model):
     start_datetime = models.DateTimeField(auto_now=False, auto_now_add=False)
     end_datetime = models.DateTimeField(auto_now=False, auto_now_add=False)
     comments = models.CharField(max_length=50)
-    contact_user_id = models.ForeignKey(user_registration, on_delete=models.CASCADE, related_name="company_contact_user_id")
+    contact_user_id = models.ForeignKey(user_registration, on_delete=models.CASCADE, related_name="company_contact_user_id", blank=True, null=True)
     contact_phone =models.CharField(max_length=50)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(user_registration, on_delete=models.CASCADE, related_name="company_created_by_id")
