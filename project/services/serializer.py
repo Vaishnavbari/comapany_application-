@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import company_provider_service_category, company_provider, service,company
 from application.models import application_access
+from project.utils import CheckCompanyAccess
 
 class CompanyProviderServiceCategorySerializer(serializers.Serializer):
     company_name = serializers.CharField(write_only=True)
@@ -72,8 +73,7 @@ class ServiceSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError("Company not found")
             
         company_provider_id = validated_data.get("company_provider_id")
-    
-        check_company_permission = application_access.objects.filter(company_id=company_id.id, user_id=user.id)
+        check_company_permission = application_access.objects.filter(user_id=user.id, company_id=company_id.id)
         if not check_company_permission:
             raise serializers.ValidationError("You don't have access to this company")
         

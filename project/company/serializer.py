@@ -3,7 +3,7 @@ from .models import document_type,company_provider,company
 from company.models import *
 from application.models import application_access
 from datetime import datetime
-
+from project.utils import CheckCompanyAccess
 
 class DocumentTypeSerializer(serializers.ModelSerializer):
 
@@ -42,7 +42,8 @@ class CompanyProviderSerializer(serializers.ModelSerializer):
         if not check_company:
             raise serializers.ValidationError("company not found")
         
-        user_access = application_access.objects.filter(user_id=user.id, application_access=company_id)
+        user_access = CheckCompanyAccess(user.id,company_id)
+        # user_access = application_access.objects.filter(user_id=user.id, application_access=company_id)
         if not user_access:
             raise serializers.ValidationError("you dont have access to this company")
         
@@ -63,7 +64,8 @@ class CompanyProviderSerializer(serializers.ModelSerializer):
         if not check_company:
             raise serializers.ValidationError("company not found")
         
-        user_access = application_access.objects.filter(user_id=user.id, application_access=company_id)
+        user_access = CheckCompanyAccess(user.id, company_id)
+
         if not user_access:
             raise serializers.ValidationError("you dont have access to this company")
         

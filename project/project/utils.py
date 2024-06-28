@@ -2,6 +2,7 @@ from functools import wraps
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import serializers
+from application.models import application_access
 def ExceptionHandling(func):
 
     @wraps(func)
@@ -20,3 +21,11 @@ def ExceptionHandling(func):
             return Response({"message": "something went wrong", "error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
     return inner
+
+
+def CheckCompanyAccess(user_id,company_id):
+
+    user_access = application_access.objects.filter(user_id=user_id ,application_access=company_id)
+        
+    return user_access
+    
