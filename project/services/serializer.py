@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import company_provider_service_category, company_provider, service,company
+from application.models import application_access
 
 class CompanyProviderServiceCategorySerializer(serializers.Serializer):
     company_name = serializers.CharField(write_only=True)
@@ -65,12 +66,18 @@ class ServiceSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user=self.context.get("user")
         company_id = validated_data.get("company_id")
-        check_company = company.objects.filter(id=company_id.id)
-        if not check_company:
-            raise serializers.ValidationError("Company not found")
-        
+        if company_id :
+            check_company = company.objects.filter(id=company_id.id).first()
+            if not check_company:
+                raise serializers.ValidationError("Company not found")
+            
         company_provider_id = validated_data.get("company_provider_id")
-        check_company_provider = company_provider.objects.filter(id=company_provider_id.id,registered_by=user)
+    
+        check_company_permission = application_access.objects.filter(company_id=company_id.id, user_id=user.id)
+        if not check_company_permission:
+            raise serializers.ValidationError("You don't have access to this company")
+        
+        check_company_provider = company_provider.objects.filter(company_id=company_id.id)
         if not check_company_provider:
             raise serializers.ValidationError("Company provider not found")
         
@@ -83,22 +90,20 @@ class ServiceSerializer(serializers.ModelSerializer):
         end_datetime = validated_data.get("end_datetime")
         comments = validated_data.get("comments")
         contact_phone = validated_data.get("contact_phone")
-        return service.objects.create(company_id=check_company.first(), company_provider_id=check_company_provider.first(), service_category_id=service_category_id, company_site_id=company_site_id,service_status_id=service_status_id, prospective_start_date=prospective_start_date, prospective_end_date=prospective_end_date, start_datetime=start_datetime, end_datetime=end_datetime,comments=comments, contact_phone=contact_phone, contact_user_id=user, created_by=user, modified_by=user)
+        return service.objects.create(company_id=check_company, company_provider_id=company_provider_id, service_category_id=service_category_id, company_site_id=company_site_id,service_status_id=service_status_id, prospective_start_date=prospective_start_date, prospective_end_date=prospective_end_date, start_datetime=start_datetime, end_datetime=end_datetime,comments=comments, contact_phone=contact_phone, contact_user_id=user, created_by=user)
     
     def update(self, instance, validated_data):
         user=self.context.get("user")
         company_id = validated_data.get("company_id")
         if company_id:
-            check_company = company.objects.filter(id=company_id.id)
-            if not check_company:
-                raise serializers.ValidationError("Company not found")
-        
-        company_provider_id = validated_data.get("company_provider_id")
-        if company_provider_id:
-
-            check_company_provider = company_provider.objects.filter(id=company_provider_id.id,registered_by=user)
+            check_company_permission = application_access.objects.filter(company_id=company_id.id, user_id=user.id)
+            if not check_company_permission:
+                raise serializers.ValidationError("You don't have access to this company")
+            
+            check_company_provider = company_provider.objects.filter(company_id=company_id.id)
             if not check_company_provider:
                 raise serializers.ValidationError("Company provider not found")
+                
         instance.company_id = validated_data.get("company_id", instance.company_id)
         instance.company_provider_id = validated_data.get("company_provider_id", instance.company_provider_id)
         instance.service_category_id = validated_data.get("service_category_id", instance.service_category_id)
@@ -111,7 +116,6 @@ class ServiceSerializer(serializers.ModelSerializer):
         instance.comments = validated_data.get("comments", instance.comments)
         instance.contact_user_id = validated_data.get("contact_user_id", instance.contact_user_id)
         instance.contact_phone = validated_data.get("contact_phone", instance.contact_phone)
-        instance.created_by = validated_data.get("created_by", instance.created_by)
-        instance.modified_by = validated_data.get("modified_by", instance.modified_by)
+        instance.modified_by = validated_data.get(user, instance.modified_by)
         instance.save()
         return instance

@@ -35,7 +35,7 @@ class service(models.Model):
     # id = models.IntegerField(primary_key=True, unique=True, default=1)
     service_uuid = models.UUIDField(default = uuid.uuid4, editable = False)
     company_id = models.ForeignKey(company, on_delete=models.CASCADE, related_name="company_company_id")
-    company_provider_id = models.ForeignKey(company_provider, on_delete=models.CASCADE, related_name="company_company_provider_id")
+    company_provider_id = models.ForeignKey(company_provider, on_delete=models.CASCADE, related_name="company_company_provider_id", blank=True, null=True)
     service_category_id = models.ForeignKey(service_category, on_delete=models.CASCADE, related_name="company_service_category_id")
     company_site_id = models.ForeignKey(company_site, on_delete=models.CASCADE, related_name="company_company_site_id")
     service_status_id = models.ForeignKey(service_status, on_delete=models.CASCADE, related_name="company_service_status_id")
