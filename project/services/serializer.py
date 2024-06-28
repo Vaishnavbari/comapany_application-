@@ -1,7 +1,5 @@
 from rest_framework import serializers
-from .models import company_provider_service_category, company_provider, service_category, service,company, company_site, service_status
-from user_application.models import user_registration
-from application.models import application_access
+from .models import company_provider_service_category, company_provider, service,company
 
 class CompanyProviderServiceCategorySerializer(serializers.Serializer):
     company_name = serializers.CharField(write_only=True)
